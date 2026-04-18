@@ -33,5 +33,3 @@ export const wagmiConfig = getDefaultConfig({
   },
   ssr: false,
 });
-
-export const WRITES_ENABLED = import.meta.env.VITE_ENABLE_WRITES === 'true';

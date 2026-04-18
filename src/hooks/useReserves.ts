@@ -11,6 +11,7 @@ export type ReserveRow = {
   supplyApyRay: bigint;
   borrowApyRay: bigint;
   aTokenAddress: Address;
+  variableDebtTokenAddress: Address;
 };
 
 export function useReserves() {
@@ -65,6 +66,7 @@ export function useReserves() {
         currentLiquidityRate: bigint;
         currentVariableBorrowRate: bigint;
         aTokenAddress: Address;
+        variableDebtTokenAddress: Address;
       };
 
       rows.push({
@@ -80,6 +82,7 @@ export function useReserves() {
         supplyApyRay: rd.currentLiquidityRate,
         borrowApyRay: rd.currentVariableBorrowRate,
         aTokenAddress: rd.aTokenAddress,
+        variableDebtTokenAddress: rd.variableDebtTokenAddress,
       });
     }
   }

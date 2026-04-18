@@ -10,7 +10,9 @@ Built by [Protocol Wealth](https://protocolwealthllc.com) as defensive infrastru
 
 ## Status
 
-**v0.1 — read-only.** The console reads `getUserAccountData` and reserve rates from the canonical Aave V3 Pool on Ethereum mainnet. Write flows (supply, withdraw, borrow, repay) are **disabled** in v1. They ship behind the `VITE_ENABLE_WRITES` flag after a dedicated security review.
+**v0.2 — read + single-tx writes.** The console supports `supply`, `withdraw`, `borrow`, `repay` on the canonical Aave V3 Pool. Each is one transaction (plus a one-time `approve` for supply/repay). No backend, no custody — every signature happens in your wallet.
+
+Native ETH is not yet supported; deposit/borrow operates on WETH. Leverage (looping) and unloop (deleverage) are not yet implemented — see roadmap.
 
 ## Stack
 
@@ -47,8 +49,7 @@ The dev server runs on `http://localhost:5173`.
 | Var | Required | Purpose |
 |-----|----------|---------|
 | `VITE_WALLETCONNECT_PROJECT_ID` | yes | WalletConnect/RainbowKit project ID |
-| `VITE_ALCHEMY_API_KEY` | no | Higher-reliability Ethereum RPC; falls back to viem public RPC |
-| `VITE_ENABLE_WRITES` | no | `true` to enable write flows (off by default) |
+| `VITE_ALCHEMY_API_KEY` | no | Higher-reliability Ethereum RPC; falls back to a chain of CORS-enabled public RPCs (publicnode, Ankr, Cloudflare) |
 
 ## Deploy
 
@@ -76,10 +77,12 @@ Note: Vite inlines `VITE_*` env vars at build time, not runtime. Changing them r
 
 ## Roadmap
 
-- [ ] Per-reserve supply/borrow breakdown for the connected wallet
-- [ ] Write flows behind `VITE_ENABLE_WRITES` — supply, withdraw, borrow, repay
-- [ ] Multi-chain: Base, Arbitrum, Polygon (configuration, not code)
+- [x] v0.1 — Read-only position + reserves
+- [x] v0.2 — Supply, withdraw, borrow, repay (single-tx each)
+- [ ] v0.3 — Leverage (looping) and unloop (deleverage), multi-tx via Uniswap V3
+- [ ] WETH gateway for native ETH supply/withdraw
 - [ ] eMode / isolation mode awareness
+- [ ] Multi-chain: Base, Arbitrum, Polygon (configuration, not code)
 - [ ] Health-factor alerting (webhook out)
 
 ## Not financial advice

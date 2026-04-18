@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body {
+    @apply bg-bg text-fg font-sans antialiased;
+  }
+
+  body {
+    min-height: 100dvh;
+  }
+
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-surface border border-border rounded-xl p-5;
+  }
+
+  .stat-label {
+    @apply text-xs text-muted uppercase tracking-wider;
+  }
+
+  .stat-value {
+    @apply text-xl font-mono tabular-nums;
+  }
+}

@@ -10,9 +10,15 @@ Built by [Protocol Wealth](https://protocolwealthllc.com) as defensive infrastru
 
 ## Status
 
-**v0.2 — read + single-tx writes.** The console supports `supply`, `withdraw`, `borrow`, `repay` on the canonical Aave V3 Pool. Each is one transaction (plus a one-time `approve` for supply/repay). No backend, no custody — every signature happens in your wallet.
+**v0.3 — read + single-tx writes + multi-tx leverage/unloop.** The console supports every core operation you'd want on a position:
 
-Native ETH is not yet supported; deposit/borrow operates on WETH. Leverage (looping) and unloop (deleverage) are not yet implemented — see roadmap.
+- `supply`, `withdraw`, `borrow`, `repay` — one tx each (plus one-time `approve`)
+- **Leverage (looping)** — `supply → (borrow → swap → supply) × N` via Uniswap V3, best-of-4-fee-tier quoting, per-iteration slippage protection
+- **Unloop (deleverage)** — `(withdraw → swap → repay) × N` with debt clamping
+
+No flash loans, no new smart contracts. Every step is a standard transaction the user signs in their wallet. No backend, no custody.
+
+Native ETH is not yet supported; supply/borrow operates on WETH.
 
 ## Stack
 
@@ -79,8 +85,9 @@ Note: Vite inlines `VITE_*` env vars at build time, not runtime. Changing them r
 
 - [x] v0.1 — Read-only position + reserves
 - [x] v0.2 — Supply, withdraw, borrow, repay (single-tx each)
-- [ ] v0.3 — Leverage (looping) and unloop (deleverage), multi-tx via Uniswap V3
+- [x] v0.3 — Leverage (looping) and unloop (deleverage), multi-tx via Uniswap V3
 - [ ] WETH gateway for native ETH supply/withdraw
+- [ ] Permit-based approvals (skip the approve tx where supported)
 - [ ] eMode / isolation mode awareness
 - [ ] Multi-chain: Base, Arbitrum, Polygon (configuration, not code)
 - [ ] Health-factor alerting (webhook out)

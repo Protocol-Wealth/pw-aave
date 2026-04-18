@@ -12,7 +12,23 @@ export type ReserveRow = {
   borrowApyRay: bigint;
   aTokenAddress: Address;
   variableDebtTokenAddress: Address;
+  ltvBps: number; // loan-to-value in bps (10000 = 100%)
+  liquidationThresholdBps: number;
+  isActive: boolean;
+  isFrozen: boolean;
+  borrowEnabled: boolean;
 };
+
+// Aave V3 ReserveConfigurationMap bit layout. See:
+// https://docs.aave.com/developers/core-contracts/pool#getreservedata
+function decodeConfig(data: bigint) {
+  const ltv = Number(data & 0xffffn);
+  const liqThreshold = Number((data >> 16n) & 0xffffn);
+  const isActive = ((data >> 56n) & 1n) === 1n;
+  const isFrozen = ((data >> 57n) & 1n) === 1n;
+  const borrowEnabled = ((data >> 58n) & 1n) === 1n;
+  return { ltv, liqThreshold, isActive, isFrozen, borrowEnabled };
+}
 
 export function useReserves() {
   const listQuery = useReadContract({
@@ -63,11 +79,14 @@ export function useReserves() {
       if (reserveResult?.status !== 'success') continue;
 
       const rd = reserveResult.result as {
+        configuration: { data: bigint };
         currentLiquidityRate: bigint;
         currentVariableBorrowRate: bigint;
         aTokenAddress: Address;
         variableDebtTokenAddress: Address;
       };
+
+      const cfg = decodeConfig(rd.configuration.data);
 
       rows.push({
         asset: assets[i],
@@ -83,6 +102,11 @@ export function useReserves() {
         borrowApyRay: rd.currentVariableBorrowRate,
         aTokenAddress: rd.aTokenAddress,
         variableDebtTokenAddress: rd.variableDebtTokenAddress,
+        ltvBps: cfg.ltv,
+        liquidationThresholdBps: cfg.liqThreshold,
+        isActive: cfg.isActive,
+        isFrozen: cfg.isFrozen,
+        borrowEnabled: cfg.borrowEnabled,
       });
     }
   }
